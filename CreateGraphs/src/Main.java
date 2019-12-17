@@ -87,7 +87,12 @@ public class Main {
 				
 				if(row.getRowNum() > 0) {
 					Cell currentCell = row.getCell(columnIndex);
-					String currentAnswer = currentCell.getRichStringCellValue().getString();
+					String currentAnswer = null;
+					if(currentCell != null) { 
+						currentAnswer = currentCell.getRichStringCellValue().getString();
+					} else {
+						currentAnswer = "";
+					}
 					
 					total++;
 					
