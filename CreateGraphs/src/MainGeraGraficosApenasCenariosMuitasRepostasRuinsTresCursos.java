@@ -22,7 +22,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
 
 /*
  * Este programa gera graficos apenas para cenarios onde as respostas "nao sei/desconheco e ruim" ultrapassam os 40% das respostas
- * Pede-se 3 planilhas. Sao inseridos no grafico os 3 cursos 
+ * Pede-se 3 planilhas. Sao inseridos no grafico os 3 cursos.
  */
 
 import Model.Question;
