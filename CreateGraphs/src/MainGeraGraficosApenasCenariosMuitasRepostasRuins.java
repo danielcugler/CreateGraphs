@@ -20,6 +20,10 @@ import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 
+/*
+ * Este programa gera graficos apenas para cenarios onde as respostas "nao sei/desconheco e ruim" ultrapassam os 40% das respostas
+ */
+
 import Model.Question;
 
 
@@ -28,11 +32,11 @@ import Model.Question;
  * This access a spreadsheet with questions in the first line, and answers in the vertical position. 
  */
 
-public class Main {
+public class MainGeraGraficosApenasCenariosMuitasRepostasRuins {
 
 	public static void main(String[] args) {
 		
-		JOptionPane.showMessageDialog(null, "Este programa foi desenvolvido para funcionar no Linux. \nSelecione a planilha desejada a seguir. Garanta que esta planilha tenha apenas uma aba.");
+		JOptionPane.showMessageDialog(null, "GERA APENAS GRAFICOS PARA CENÁRIOS COM PONTUAÇÃO RUIM\nEste programa foi desenvolvido para funcionar no Linux. \nSelecione a planilha desejada a seguir. Garanta que esta planilha tenha apenas uma aba.");
 		
 		
 		
@@ -137,57 +141,66 @@ public class Main {
 			System.out.println("TOTAL: " + total);
 			
 			
+			float percentageNaoSeiPlusRuim;
+			if(currentQuestion.getRazoavel() + currentQuestion.getBom() + currentQuestion.getOtimo() == 0) {
+				percentageNaoSeiPlusRuim =  (currentQuestion.getNaoSei() + currentQuestion.getRuim()) / (currentQuestion.getRazoavel() + currentQuestion.getBom() + currentQuestion.getOtimo() + currentQuestion.getSemResposta());
+			} else {
+				percentageNaoSeiPlusRuim = (currentQuestion.getNaoSei() + currentQuestion.getRuim()) / (currentQuestion.getRazoavel() + currentQuestion.getBom() + currentQuestion.getOtimo());
+			}
 			
 			
-			
-			DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-			
-			dataset.addValue(currentQuestion.getNaoSei(), Question.NAO_SEI, "");
-			dataset.addValue(currentQuestion.getRuim(), Question.RUIM, "");
-			dataset.addValue(currentQuestion.getRazoavel(), Question.RAZOAVEL, "");
-			dataset.addValue(currentQuestion.getBom(), Question.BOM, "");
-			dataset.addValue(currentQuestion.getOtimo(), Question.OTIMO, "");
-			dataset.addValue(currentQuestion.getSemResposta(), Question.SEM_RESPOSTA, "");
-			
-			JFreeChart barChart = ChartFactory.createBarChart(
-			         question, 
-			         "", 
-			         "", 
-			         dataset,
-			         PlotOrientation.VERTICAL, 
-			         true, 
-			         true, 
-			         false);
-			
-
-			
-	        CategoryPlot plot = barChart.getCategoryPlot();
-
-	        plot.getRenderer().setSeriesItemLabelsVisible(1, true);
-	        plot.getRenderer().setDefaultItemLabelsVisible(true);
-	        plot.getRenderer().setDefaultSeriesVisible(true);
-	        barChart.getCategoryPlot().setRenderer(plot.getRenderer());
-
-			
-	        plot.getRenderer().setDefaultItemLabelGenerator(new StandardCategoryItemLabelGenerator("{3}", NumberFormat.getPercentInstance()));
-	        plot.getRenderer().setDefaultItemLabelsVisible(true);
-			
-			
-			
-			
-			         
-		    int width = 640;    /* Width of the image */
-		    int height = 480;   /* Height of the image */ 
-		    question = question.replace("/", "-");
-		    File myChartFile = new File(selectedFileFolder.getAbsolutePath() + "/" + question + ".jpeg" ); 
-		    
-		    try {
-				ChartUtils.saveChartAsJPEG(myChartFile , barChart , width , height);
-		    } catch (IOException e) {
-		    	JOptionPane.showMessageDialog(null, "Error " + e.getMessage());
-		    	e.printStackTrace();
+			if(percentageNaoSeiPlusRuim >= 0.40) {
+				DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 				
-		    }
+				dataset.addValue(currentQuestion.getNaoSei(), Question.NAO_SEI, "");
+				dataset.addValue(currentQuestion.getRuim(), Question.RUIM, "");
+				dataset.addValue(currentQuestion.getRazoavel(), Question.RAZOAVEL, "");
+				dataset.addValue(currentQuestion.getBom(), Question.BOM, "");
+				dataset.addValue(currentQuestion.getOtimo(), Question.OTIMO, "");
+				dataset.addValue(currentQuestion.getSemResposta(), Question.SEM_RESPOSTA, "");
+				
+				JFreeChart barChart = ChartFactory.createBarChart(
+				         question, 
+				         "", 
+				         "", 
+				         dataset,
+				         PlotOrientation.VERTICAL, 
+				         true, 
+				         true, 
+				         false);
+				
+
+				
+		        CategoryPlot plot = barChart.getCategoryPlot();
+
+		        plot.getRenderer().setSeriesItemLabelsVisible(1, true);
+		        plot.getRenderer().setDefaultItemLabelsVisible(true);
+		        plot.getRenderer().setDefaultSeriesVisible(true);
+		        barChart.getCategoryPlot().setRenderer(plot.getRenderer());
+
+				
+		        plot.getRenderer().setDefaultItemLabelGenerator(new StandardCategoryItemLabelGenerator("{3}", NumberFormat.getPercentInstance()));
+		        plot.getRenderer().setDefaultItemLabelsVisible(true);
+				
+				
+				
+				
+				         
+			    int width = 640;    /* Width of the image */
+			    int height = 480;   /* Height of the image */ 
+			    question = question.replace("/", "-");
+			    File myChartFile = new File(selectedFileFolder.getAbsolutePath() + "/" + question + ".jpeg" ); 
+			    
+			    try {
+					ChartUtils.saveChartAsJPEG(myChartFile , barChart , width , height);
+			    } catch (IOException e) {
+			    	JOptionPane.showMessageDialog(null, "Error " + e.getMessage());
+			    	e.printStackTrace();
+					
+			    }				
+			}
+			
+
 		}
 	}
 
